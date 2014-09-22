@@ -25,10 +25,8 @@ public class UIHandler implements ActionListener{
 	private JFrame mFrame = new JFrame("LPChecker");
 	private JPanel mPanel = new JPanel();
 	private Dimension scrSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private	int DAYS_FOR_LP_LOSS = 28;
-	private long matchTime;
+	private final int DAYS_FOR_LP_LOSS = 28;
 	private LocalDate currDate = new LocalDate();
-	private LocalDate matchDate;
 	private int daysSinceMatch;
 	private int daysTillLoss;
 	//StartScreen Components
@@ -94,6 +92,8 @@ public class UIHandler implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		long matchTime;
+		LocalDate matchDate;
 		if(e.getSource() == searchBut){
 			String summRegion = summRegionBox.getSelectedItem().toString().toLowerCase();
 			String summID = qH.getSummID(summNameBox.getText(), summRegion);
@@ -102,10 +102,9 @@ public class UIHandler implements ActionListener{
 				matchDate = new LocalDate(matchTime);
 				daysSinceMatch = Days.daysBetween(matchDate, currDate).getDays();
 				daysTillLoss = DAYS_FOR_LP_LOSS - daysSinceMatch;
-				System.out.println("I worked with " + daysTillLoss);
 				showStatsScreen();
 			}else{
-				JOptionPane.showMessageDialog(mPanel, "Cannot find Summoner. Check entered name and region.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(mPanel, "Error - cannot find summoner. Summoner must be ", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}else if(e.getSource() == againBut){
 			showStartScreen();

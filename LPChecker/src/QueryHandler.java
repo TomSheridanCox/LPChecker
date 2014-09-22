@@ -16,6 +16,7 @@ public class QueryHandler
 	
 	public String getSummID(String summName, String region){
 		String summID = "";
+		long summLev = 0;
 		URL summURL;
 		try {
 			summURL = new URL("https://"+region+".api.pvp.net/api/lol/"+region+"/v1.4/summoner/by-name/"+summName+"?api_key="+apiKey);
@@ -26,6 +27,9 @@ public class QueryHandler
 			}
 			JSONObject obj = new JSONObject(response);
 			summID = obj.getJSONObject(summName.toLowerCase()).get("id").toString();
+			if(!obj.getJSONObject(summName.toLowerCase()).get("summonerLevel").toString().equals("30")){
+				
+			}
 			rd.close();
 		} catch (IOException e1) {
 			return "failed";
