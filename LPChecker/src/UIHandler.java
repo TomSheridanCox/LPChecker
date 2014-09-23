@@ -5,7 +5,13 @@ import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -30,6 +36,9 @@ public class UIHandler implements ActionListener{
 	private int daysSinceMatch;
 	private int daysTillLoss;
 	//StartScreen Components
+	private JLabel summReqs1 = new JLabel("Requirements:");
+	private JLabel summReqs2 = new JLabel("Must be level 30");
+	private JLabel summReqs3 = new JLabel("Must have played Ranked Solo Queue since late July");	
 	private JLabel summNameLab = new JLabel("Enter Summoner Name:");
 	private JTextField summNameBox = new JTextField();
 	private JLabel summRegionLab = new JLabel("Choose Region:");
@@ -44,7 +53,11 @@ public class UIHandler implements ActionListener{
 	private Font smallFont = new Font("Verdana", Font.BOLD, 10);
 	private JButton againBut = new JButton("Search Again");
 	private JButton closeBut = new JButton("Close");
-
+	
+	/**
+	 * Prepares the size, icon, location, and other properties of the frame.
+	 * Sets the background and content of the panel (using showStartScreen()).
+	 */
 	public UIHandler(){
 		searchBut.addActionListener(this);
 		againBut.addActionListener(this);
@@ -53,15 +66,31 @@ public class UIHandler implements ActionListener{
 		mFrame.setResizable(false);
 		mFrame.setSize(new Dimension(scrSize.width*1/6, scrSize.height*1/4));
 		mPanel.setBackground(new Color(0xAAF6FA));
-		mFrame.setIconImage(new ImageIcon("src/frameIcon.png").getImage());
+		mFrame.setIconImage(new ImageIcon(getClass().getClassLoader().getResource("frameIcon.png")).getImage());
 		mFrame.setContentPane(mPanel);
 		mFrame.setLocation(scrSize.width/2-mFrame.getSize().width/2, scrSize.height/2-mFrame.getSize().height/2);
 		showStartScreen();
 		mFrame.setVisible(true);
 	}
 
+	/**
+	 * Displays the opening screen where users enter a summoner name and region.
+	 * Sets the font and colour of the labels, and the layout of the panel.
+	 */
 	public void showStartScreen(){
+		mPanel.setLayout(new GridLayout(8,1));
 		prepPanel();
+		summReqs1.setFont(smallFont);
+		summReqs2.setFont(smallFont);
+		summReqs3.setFont(smallFont);
+		summNameLab.setFont(smallFont);
+		summRegionLab.setFont(smallFont);
+		summReqs1.setForeground(Color.red);
+		summReqs2.setForeground(Color.red);
+		summReqs3.setForeground(Color.red);
+		mPanel.add(summReqs1);
+		mPanel.add(summReqs2);
+		mPanel.add(summReqs3);
 		mPanel.add(summNameLab);
 		mPanel.add(summNameBox);
 		mPanel.add(summRegionLab);
@@ -69,10 +98,15 @@ public class UIHandler implements ActionListener{
 		mPanel.add(searchBut);
 	}
 
+	/**
+	 * Displays the  screen where users are shown how many days they have left till LP decay occurs.
+	 * Sets the font and colour of the labels, and the layout of the panel.
+	 */
 	public void showStatsScreen(){
+		mPanel.setLayout(new GridLayout(5,1));
 		prepPanel();
-		daysSinLab = new JLabel("Your last ranked match was " + daysSinceMatch + " days ago. You have:");
-		daysLefLab = new JLabel(Integer.toString(daysTillLoss) + " days", SwingConstants.CENTER);
+		daysSinLab = new JLabel("<html>Your last ranked match was <font color='red'>" + daysSinceMatch + " days ago</font>. You have:</html>");
+		daysLefLab = new JLabel("<html><font color='red'>"+Integer.toString(daysTillLoss) + " days</font></html>", SwingConstants.CENTER);
 		daysSinLab.setFont(smallFont);
 		daysLefLab.setFont(largeFont);
 		botLab.setFont(smallFont);
@@ -83,8 +117,10 @@ public class UIHandler implements ActionListener{
 		mPanel.add(closeBut);
 	}
 	
+	/**
+	 * Clears the panel of all components.
+	 */
 	private void prepPanel(){
-		mPanel.setLayout(new GridLayout(5,1));
 		mPanel.removeAll();
 		mPanel.revalidate();
 		mPanel.repaint();
@@ -104,7 +140,7 @@ public class UIHandler implements ActionListener{
 				daysTillLoss = DAYS_FOR_LP_LOSS - daysSinceMatch;
 				showStatsScreen();
 			}else{
-				JOptionPane.showMessageDialog(mPanel, "Error - cannot find summoner. Summoner must be ", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(mPanel, "Error - cannot find summoner.\nEnsure correct Summoner Name and Region chosen.\nEnsure listed requirements are fulfilled.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}else if(e.getSource() == againBut){
 			showStartScreen();
